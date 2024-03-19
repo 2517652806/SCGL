@@ -1,0 +1,58 @@
+server:
+  port: 8083
+
+
+
+spring:
+  application:
+    name: service-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 8.137.39.123:8848
+#        namespace: a6bd89bf-fc3a-45a1-8018-116df3b283e2
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: service-commodity
+          uri: lb://service-commodity
+          predicates:
+            - Path=/*/commodity/**
+
+        - id: service-activity
+          uri: lb://service-activity
+          predicates:
+            - Path=/*/activity/**
+
+        - id: service-order
+          uri: lb://service-order
+          predicates:
+            - Path=/*/order/**
+
+
+        - id: service-user
+          uri: lb://service-user
+          predicates:
+            - Path=/*/user/**
+
+        - id: service-search
+          uri: lb://service-search
+          predicates:
+            - Path=/*/search/**
+
+        - id: service-order
+          uri: lb://service-order
+          predicates:
+             - Path=/*/order/**
+
+
+
+
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+
