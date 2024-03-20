@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 public enum UserType {
-    USER(1, "用户"),
-    EMPLOYEE(2, "员工"),
-    ADMIN(3, "管理员");
+    USER(2, "家庭用户"),
+    EMPLOYEE(1, "员工"),
+    ADMIN(0, "管理员");
 
     public static UserType getByCode(Integer code) {
         UserType[] values = UserType.values();
