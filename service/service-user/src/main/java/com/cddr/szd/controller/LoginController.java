@@ -13,9 +13,10 @@ public class LoginController {
     public String test(){
         System.out.println("lllll");
         User user = new User();
-        user.setId(1).setUserName("余尚聪").setType(1);
-        String token = JWTHelper.createToken(user);
-        return token;
+        user.setId(1);
+//        String token = JWTHelper.createToken(user);
+//        return token;
+        return "1313";
     }
 
 }

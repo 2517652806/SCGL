@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,41 +24,30 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Serializable {
+public class Food implements Serializable {
+
 
     @TableId(type = IdType.AUTO)
     @NotNull
     private Integer id;
     @Size(max = 50, message = "名字的长度不能超过50个字符")
-    private String name;
-    @NotEmpty
-    @Email
-    private String email;
+    private String nameFood;
 
     /**
-     * 采购权限
+     * 食物采购时间
      */
-    private Integer addPermission;
+
+    private LocalDateTime foodCreatetime;
 
     /**
-     * 修改权限
+     * 食物过期时间
      */
-    private Integer updataPermission;
+    private LocalDateTime foodExpirationTime;
 
     /**
-     * 删除权限
+     * 食物重量单位kg
      */
-    private Integer deletePermission;
-
-    /**
-     * 将过期食物提交为过期状态的权限
-     */
-    private Integer submitExpiredItemPermission;
-
-    /**
-     * 0->管理员，1—》企业用户，2—》用户
-     */
-    private Integer type;
+    private Integer foodNumberWarehouses;
 
     /**
      * 创建时间
@@ -81,9 +68,25 @@ public class User implements Serializable {
     private Integer isDeleted;
 
     /**
-     * 公司名
+     * 采购源是哪家公司
      */
-    private String companyName;
+    private String purchaseSource;
+
+    /**
+     * 食物种类
+     */
+    @Size(max = 50, message = "名字的长度不能超过50个字符")
+    private String foodTypeId;
+
+    /**
+     * 1->没有过期 2->过期
+     */
+    private Integer foodState;
+
+    /**
+     * 如果查询的公司name为空->user_id=id,如果查询的公司name不为空->user_id=user.company_name,
+     */
+    private String userId;
 
 
 }
