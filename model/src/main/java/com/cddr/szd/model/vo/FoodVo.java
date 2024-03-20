@@ -1,17 +1,19 @@
-package com.cddr.szd.model;
+package com.cddr.szd.model.vo;
 
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
+import javax.validation.groups.Default;
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 /**
  * <p>
  * 
@@ -24,11 +26,11 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Food implements Serializable {
+public class FoodVo implements Serializable {
 
 
-    @TableId(type = IdType.AUTO)
-    @NotNull
+
+    @NotNull(groups = Update.class)
     private Integer id;
     @Size(max = 50, message = "名字的长度不能超过50个字符")
     private String nameFood;
@@ -67,10 +69,10 @@ public class Food implements Serializable {
     @TableLogic
     private Integer isDeleted;
 
-    /**
-     * 采购源是哪家公司
-     */
-    private String purchaseSource;
+//    /**
+//     * 采购源是哪家公司
+//     */
+//    private String purchaseSource;
 
     /**
      * 食物种类
@@ -78,15 +80,21 @@ public class Food implements Serializable {
     @Size(max = 50, message = "名字的长度不能超过50个字符")
     private String foodTypeId;
 
-    /**
-     * 1->没有过期 2->过期
-     */
-    private Integer foodState;
+//    /**
+//     * 1->没有过期 2->过期
+//     */
+//    private Integer foodState;
 
     /**
      * 如果查询的公司name为空->user_id=id,如果查询的公司name不为空->user_id=user.company_name,
      */
     private Integer userId;
+    public interface Add extends Default {
 
+    }
+
+    public interface Update extends Default{
+
+    }
 
 }

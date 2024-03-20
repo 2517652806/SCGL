@@ -19,6 +19,18 @@ public enum BizCodeEnum {
     CODE_ERROR(240003, "验证码错误"),
     CODE_CAPTCHA_ERROR(240101, "图形验证码错误"),
 
+    Wrong_Role(210007, "角色错误"),
+
+    /**
+     * 数据
+     */
+    Failed_To_Add(220001, "添加失败"),
+    Failed_To_Update(220002, "更新失败"),
+    Failed_To_Delete(220003, "删除失败"),
+    Failed_To_Get(220004, "获取失败"),
+    Failed_To_Page(220005, "分页失败"),
+    Failed_To_Export(220006, "导出失败"),
+    Failed_To_Import(220007, "导入失败"),
 
     /**
      * 账号
