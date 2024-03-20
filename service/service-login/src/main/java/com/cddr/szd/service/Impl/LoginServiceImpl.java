@@ -1,10 +1,24 @@
 package com.cddr.szd.service.Impl;
 
-import com.cddr.szd.exception.SZDException;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cddr.szd.enums.BizCodeEnum;
+import com.cddr.szd.enums.UserType;
+import com.cddr.szd.exception.BizException;
+import com.cddr.szd.helper.JWTHelper;
+import com.cddr.szd.helper.Md5Util;
+import com.cddr.szd.login.ThreadLocalUtil;
+import com.cddr.szd.loginModel.RegularUser;
+import com.cddr.szd.mapper.UserMapper;
 import com.cddr.szd.model.Email;
+import com.cddr.szd.model.User;
+import com.cddr.szd.model.vo.UserVo;
 import com.cddr.szd.service.LoginService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +30,18 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class LoginServiceImpl implements LoginService {
+public class LoginServiceImpl extends ServiceImpl<UserMapper,User> implements LoginService  {
     @Autowired
     private Email email;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private UserMapper userMapper;
+
+    /**
+     * 发送验证码
+     * @param emailNum
+     */
     @Override
     @Async//发送邮件会阻塞主线程 则使用Async来异步发送邮件
     public void getCaptcha(String emailNum) {
@@ -53,7 +74,87 @@ public class LoginServiceImpl implements LoginService {
             //邮件发送成功后，将验证码存入redis key为邮箱号 过期时间为5分钟
             stringRedisTemplate.opsForValue().set(emailNum, verificationCode, 5, TimeUnit.MINUTES);
         } catch (MessagingException e) {
-            throw new SZDException("验证码获取失败",100);
+            throw new BizException(BizCodeEnum.CODE_ERROR);
+        }
+    }
+
+    /**
+     * 家庭版用户注册
+     * @param registerUser
+     */
+    @Override
+    public void register(RegularUser registerUser) {
+        //校验两次密码是否一致
+        if (!registerUser.getPassword().equals(registerUser.getConfirmPassword())) {
+            throw new BizException(BizCodeEnum.PASSWORD_IS_NOT_TRUE);
+        }
+        //校验验证码是否正确
+        String s = stringRedisTemplate.opsForValue().get(registerUser.getEmail());
+        if (s == null || s.isEmpty() || !s.equals(registerUser.getCaptcha())) {
+            throw new BizException(BizCodeEnum.CODE_ERROR);
+        }
+
+        //判断当前邮箱是否被注册
+        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>()
+                .eq(User::getEmail, registerUser.getEmail());
+        User one = userMapper.selectOne(eq);
+        if (one == null) {
+            //对密码进行MD5加密
+            String md5String = Md5Util.getMD5String(registerUser.getPassword());
+            registerUser.setPassword(md5String);
+            //创建一个user对象
+            User user = new User();
+            //将前端传过来的合法对象赋值给user对象
+            BeanUtils.copyProperties(registerUser, user);
+            user.setType(UserType.EMPLOYEE.getCode())
+                    .setAddPermission(1).setUpdataPermission(1).setDeletePermission(1).setSubmitExpiredItemPermission(1);
+            //将user对象持久化到Mysql
+            userMapper.insert(user);
+        } else {
+            throw new BizException(BizCodeEnum.ACCOUNT_REPEAT);
+        }
+    }
+
+    @Override
+    public String login(UserVo userVo) {
+        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>().eq(User::getEmail, userVo.getUserName());
+        User user = userMapper.selectOne(eq);
+        if (user == null){
+            throw new BizException(BizCodeEnum.ACCOUNT_UNREGISTER);
+        }
+        if (!Md5Util.checkPassword(userVo.getPassword(),user.getPassword())){
+            throw new BizException(BizCodeEnum.PASSWORD_NOT_TRUE);
+        }
+        String token = JWTHelper.createToken(user);
+        //将token存入redis
+        ValueOperations<String, String> forValue = stringRedisTemplate.opsForValue();
+        forValue.set(user.getId().toString(),token,1, TimeUnit.HOURS);
+        return token;
+    }
+
+    @Override
+    public void updatePassword(String captcha, String newPwd, String rePwd) {
+        if (!newPwd.equals(rePwd)){
+            throw new BizException(BizCodeEnum.PASSWORD_IS_NOT_TRUE);
+        }
+        String token = ThreadLocalUtil.get();
+        if (token == null){
+            throw new BizException(BizCodeEnum.ACCOUNT_UN_LOGIN);
+        }
+        User userInfo = JWTHelper.getUserInfo(token);
+        //校验验证码是否正确
+        String s = stringRedisTemplate.opsForValue().get(userInfo.getEmail());
+        if (s == null || s.isEmpty() || !s.equals(captcha)) {
+            throw new BizException(BizCodeEnum.CODE_ERROR);
+        }
+        String md5String = Md5Util.getMD5String(newPwd);
+        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>().eq(User::getEmail, userInfo.getEmail());
+        User user = userMapper.selectOne(eq);
+        user.setPassword(md5String);
+        int i = userMapper.updateById(user);
+        if (i == 1) {
+            ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+            stringStringValueOperations.getOperations().delete(user.getId().toString());
         }
     }
 }

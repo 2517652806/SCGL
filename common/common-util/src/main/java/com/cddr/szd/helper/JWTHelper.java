@@ -4,6 +4,7 @@ package com.cddr.szd.helper;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.cddr.szd.model.User;
 
 import java.util.Date;
 
@@ -19,7 +20,7 @@ public class JWTHelper {
     public static String createToken(User user){
         return JWT.create()
                 .withClaim("id", user.getId())
-                .withClaim("username", user.getUserName())
+                .withClaim("email", user.getEmail())
                 .withClaim("type", user.getType())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12 * 1000))
                 .sign(Algorithm.HMAC256(tokenSignKey));
@@ -28,7 +29,7 @@ public class JWTHelper {
         DecodedJWT jwt = JWT.decode(token);
         User user = new User();
         user.setId(jwt.getClaim("id").asInt());
-        user.setUserName(jwt.getClaim("username").asString());
+        user.setEmail(jwt.getClaim("email").asString());
         user.setType(jwt.getClaim("type").asInt());
         return user;
     }

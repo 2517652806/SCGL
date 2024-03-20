@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -47,8 +48,8 @@ public class MybatisPlusConfig implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         //设置属性值
-        this.setFieldValByName("createdAt",new Date(),metaObject);
-        this.setFieldValByName("updatedAt",new Date(),metaObject);
+        this.setFieldValByName("createTime", LocalDateTime.now(),metaObject);
+        this.setFieldValByName("updatedTime",LocalDateTime.now(),metaObject);
     }
 
     /**
@@ -57,7 +58,7 @@ public class MybatisPlusConfig implements MetaObjectHandler {
      */
     @Override
     public void updateFill(MetaObject metaObject) {
-        this.setFieldValByName("updatedAt",new Date(),metaObject);
+        this.setFieldValByName("updatedTime",LocalDateTime.now(),metaObject);
     }
 }
 

@@ -8,7 +8,7 @@ mybatis-plus:
 
 spring:
   application:
-    name: service-login
+    name: service-auth
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver

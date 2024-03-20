@@ -1,7 +1,9 @@
 package com.cddr.szd.login;
 
 
+import com.cddr.szd.exception.BizException;
 import com.cddr.szd.helper.JWTHelper;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -15,8 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 //登录拦截器
 public class LoginFilter implements HandlerInterceptor {
 
-    @Resource
-    StringRedisTemplate stringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
+
+    public LoginFilter(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("Authorization");
@@ -28,9 +33,9 @@ public class LoginFilter implements HandlerInterceptor {
         //验证token是否合法
         try {
             Integer userId = JWTHelper.getUserId(token);
-            String s = stringRedisTemplate.opsForValue().get(userId);
+            String s = stringRedisTemplate.opsForValue().get(userId.toString());
             if (s == null || !s.equals(token)){
-                throw new RuntimeException("token失效");
+                throw new BizException(401,"token失效");
             }
 
             ThreadLocalUtil.set(token);
