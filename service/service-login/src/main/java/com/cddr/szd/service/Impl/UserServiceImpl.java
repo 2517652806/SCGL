@@ -1,7 +1,6 @@
 package com.cddr.szd.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cddr.szd.enums.BizCodeEnum;
 import com.cddr.szd.enums.UserType;
@@ -14,7 +13,7 @@ import com.cddr.szd.mapper.UserMapper;
 import com.cddr.szd.model.Email;
 import com.cddr.szd.model.User;
 import com.cddr.szd.model.vo.UserVo;
-import com.cddr.szd.service.LoginService;
+import com.cddr.szd.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -30,7 +29,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class LoginServiceImpl extends ServiceImpl<UserMapper,User> implements LoginService  {
+public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements UserService {
     @Autowired
     private Email email;
     @Autowired
@@ -156,5 +155,19 @@ public class LoginServiceImpl extends ServiceImpl<UserMapper,User> implements Lo
             ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
             stringStringValueOperations.getOperations().delete(user.getId().toString());
         }
+    }
+
+    @Override
+    public void logout() {
+        String token = ThreadLocalUtil.get();
+        if (token == null){
+            throw new BizException(BizCodeEnum.ACCOUNT_UN_LOGIN);
+        }
+        User userInfo = JWTHelper.getUserInfo(token);
+        Boolean delete = stringRedisTemplate.delete(userInfo.getId().toString());
+        if (!delete){
+            throw new BizException(BizCodeEnum.OPERATE_FAIL);
+        }
+        ThreadLocalUtil.remove();
     }
 }

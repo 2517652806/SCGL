@@ -3,7 +3,7 @@ package com.cddr.szd.controller;
 import com.cddr.szd.loginModel.RegularUser;
 import com.cddr.szd.model.vo.UserVo;
 import com.cddr.szd.result.Result;
-import com.cddr.szd.service.LoginService;
+import com.cddr.szd.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -16,14 +16,14 @@ import java.util.Map;
 @RequestMapping("api/auth")
 public class LoginController {
     @Autowired
-    private LoginService loginService;
+    private UserService userService;
 
     /**
      * 发送验证码
      */
     @GetMapping("/getCaptcha")
     public Result getCaptcha(@RequestParam() @Email(message = "请输入合法的邮箱") String emailNum) {
-        loginService.getCaptcha(emailNum);
+        userService.getCaptcha(emailNum);
         return Result.ok(null);
     }
 
@@ -32,7 +32,7 @@ public class LoginController {
      */
     @PostMapping("/register")
     public Result register(@RequestBody @Validated RegularUser registerUser) {
-        loginService.register(registerUser);
+        userService.register(registerUser);
         return Result.ok(null);
     }
 
@@ -41,7 +41,7 @@ public class LoginController {
      */
     @PostMapping("/login")
     public Result login(@RequestBody @Validated UserVo userVo){
-        String token = loginService.login(userVo);
+        String token = userService.login(userVo);
         return Result.ok(token);
     }
     /**
@@ -56,8 +56,16 @@ public class LoginController {
         if (!StringUtils.hasLength(captcha) || !StringUtils.hasLength(newPwd) || !StringUtils.hasLength(rePwd)) {
             return Result.fail("缺少必要参数");
         }
-        loginService.updatePassword(captcha,newPwd,rePwd);
+        userService.updatePassword(captcha,newPwd,rePwd);
         return Result.ok("操作成功");
     }
 
+    /**
+     * 退出登录
+     */
+    @GetMapping("/logout")
+    public Result logout() {
+        userService.logout();
+        return Result.ok("操作成功");
+    }
 }
