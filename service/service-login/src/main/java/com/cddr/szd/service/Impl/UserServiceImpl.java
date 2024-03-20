@@ -95,7 +95,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
 
         //判断当前邮箱是否被注册
         LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>()
-                .eq(User::getEmail, registerUser.getEmail());
+                .eq(User::getEmail, registerUser.getEmail())
+                .eq(User::getType, UserType.USER.getCode());
         User one = userMapper.selectOne(eq);
         if (one == null) {
             //对密码进行MD5加密
@@ -115,8 +116,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
     }
 
     @Override
-    public String login(UserVo userVo) {
-        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>().eq(User::getEmail, userVo.getUserName());
+    public String homeLogin(UserVo userVo) {
+        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>().eq(User::getEmail, userVo.getUserName())
+                .eq(User::getType, UserType.USER.getCode());
         User user = userMapper.selectOne(eq);
         if (user == null){
             throw new BizException(BizCodeEnum.ACCOUNT_UNREGISTER);
@@ -147,7 +149,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
             throw new BizException(BizCodeEnum.CODE_ERROR);
         }
         String md5String = Md5Util.getMD5String(newPwd);
-        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>().eq(User::getEmail, userInfo.getEmail());
+        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>().eq(User::getId, userInfo.getId());
         User user = userMapper.selectOne(eq);
         user.setPassword(md5String);
         int i = userMapper.updateById(user);
@@ -169,5 +171,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
             throw new BizException(BizCodeEnum.OPERATE_FAIL);
         }
         ThreadLocalUtil.remove();
+    }
+
+    @Override
+    public String enterpriseLogin(UserVo userVo) {
+        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>().eq(User::getName, userVo.getUserName());
+        User user = userMapper.selectOne(eq);
+        if (user == null){
+            throw new BizException(BizCodeEnum.ACCOUNT_UNREGISTER);
+        }
+        if (!Md5Util.checkPassword(userVo.getPassword(),user.getPassword())){
+            throw new BizException(BizCodeEnum.PASSWORD_NOT_TRUE);
+        }
+
+        String token = JWTHelper.createToken(user);
+        //将token存入redis
+        ValueOperations<String, String> forValue = stringRedisTemplate.opsForValue();
+        forValue.set(user.getId().toString(),token,1, TimeUnit.HOURS);
+        return token;
     }
 }

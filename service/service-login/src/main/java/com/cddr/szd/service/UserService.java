@@ -10,9 +10,11 @@ public interface UserService extends IService<User> {
 
     void register(RegularUser registerUser);
 
-    String login(UserVo userVo);
+    String homeLogin(UserVo userVo);
 
     void updatePassword(String oldPwd, String newPwd, String rePwd);
 
     void logout();
+
+    String enterpriseLogin(UserVo userVo);
 }

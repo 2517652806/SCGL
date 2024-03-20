@@ -28,20 +28,20 @@ public class LoginController {
     }
 
     /**
-     * 用户注册
+     * 家庭版用户注册
      */
-    @PostMapping("/register")
+    @PostMapping("/home/register")
     public Result register(@RequestBody @Validated RegularUser registerUser) {
         userService.register(registerUser);
         return Result.ok(null);
     }
 
     /**
-     * 用户登录
+     * 家庭版用户登录
      */
-    @PostMapping("/login")
-    public Result login(@RequestBody @Validated UserVo userVo){
-        String token = userService.login(userVo);
+    @PostMapping("/home/login")
+    public Result homeLogin(@RequestBody @Validated UserVo userVo){
+        String token = userService.homeLogin(userVo);
         return Result.ok(token);
     }
     /**
@@ -67,5 +67,14 @@ public class LoginController {
     public Result logout() {
         userService.logout();
         return Result.ok("操作成功");
+    }
+
+    /**
+     * 企业版登录
+     */
+    @PostMapping("/admin/login")
+    public Result adminLogin(@RequestBody @Validated UserVo userVo){
+        String token = userService.enterpriseLogin(userVo);
+        return Result.ok(token);
     }
 }
