@@ -1,6 +1,5 @@
 package com.cddr.szd.enums;
 
-import com.cddr.szd.model.User;
 import lombok.Getter;
 
 @Getter
