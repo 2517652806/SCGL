@@ -23,7 +23,7 @@ public class LoginFilterConfig extends WebMvcConfigurationSupport {
                 //需要拦截的路径
                 .addPathPatterns("/api/**")
                 //不需要拦截的路径 （登录接口不需要拦截）
-                .excludePathPatterns("/api/user/login/**");
+                .excludePathPatterns("/api/login/**");
         super.addInterceptors(registry);
     }
 }

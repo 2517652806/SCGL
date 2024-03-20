@@ -16,36 +16,16 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: service-commodity
-          uri: lb://service-commodity
-          predicates:
-            - Path=/*/commodity/**
-
-        - id: service-activity
-          uri: lb://service-activity
-          predicates:
-            - Path=/*/activity/**
-
-        - id: service-order
-          uri: lb://service-order
-          predicates:
-            - Path=/*/order/**
-
-
         - id: service-user
           uri: lb://service-user
           predicates:
             - Path=/*/user/**
 
-        - id: service-search
-          uri: lb://service-search
+        - id: service-login
+          uri: lb://service-login
           predicates:
-            - Path=/*/search/**
+            - Path=/*/login/**
 
-        - id: service-order
-          uri: lb://service-order
-          predicates:
-             - Path=/*/order/**
 
 
 
