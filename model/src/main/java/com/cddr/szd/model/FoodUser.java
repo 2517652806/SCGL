@@ -82,7 +82,10 @@ public class FoodUser implements Serializable {
      * 1->没有过期 2->过期
      */
     private Integer foodState;
-
+    /**
+     * 0->没有进入过期展示区 1->进入了过期展示区
+     */
+    private Integer foodExpiredImpression;
     /**
      * 如果查询的公司name为空->user_id=id,如果查询的公司name不为空->user_id=user.company_name,
      */

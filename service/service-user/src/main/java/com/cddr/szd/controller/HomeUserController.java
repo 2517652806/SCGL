@@ -1,5 +1,6 @@
 package com.cddr.szd.controller;
 
+import com.cddr.szd.model.FoodUser;
 import com.cddr.szd.model.vo.FoodUserSearchVo;
 import com.cddr.szd.model.vo.FoodUserVo;
 import com.cddr.szd.result.Result;
@@ -25,12 +26,29 @@ public class HomeUserController {
         homeUserService.updateFood(foodUserVo);
         return Result.ok(null);
     }
+    //获取所有食材
     @GetMapping ("/findAll")
     public Result findFood(FoodUserSearchVo foodUserSearchVo){
         homeUserService.getAllFood(foodUserSearchVo);
         return Result.ok(null);
     }
-
-
+    //通过id删除记录
+    @DeleteMapping("/delete/{id}")
+    public Result delete(@PathVariable Integer id){
+        homeUserService.deleteFoodType(id);
+        return Result.ok(null);
+    }
+    //把食材添加到过期展示
+    @PostMapping("/updateExpiredImpression")
+    public Result updateExpiredImpressionFood(@RequestBody FoodUser foodUser){
+        homeUserService.updateExpiredImpressionFood(foodUser);
+        return Result.ok(null);
+    }
+    //除开的过期区的数据的模糊查询
+    @GetMapping("/fuzzyFindFood")
+    public Result fuzzyFindFood(@RequestBody  @Validated(FoodUserVo.Update.class) FoodUserVo foodUserVo){
+        homeUserService.fuzzyFindFood(foodUserVo);
+        return Result.ok(null);
+    }
 
 }

@@ -1,8 +1,10 @@
 package com.cddr.szd.service.Impl;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,6 +26,8 @@ import com.cddr.szd.service.HomeUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public class HomeUserServiceImpl implements HomeUserService {
@@ -78,7 +82,45 @@ public class HomeUserServiceImpl implements HomeUserService {
     public IPage<FoodUser> getAllFood(FoodUserSearchVo foodUserSearchVo){
         Permission.check(UserType.USER.getCode());
         Page<FoodUser> page = new Page<>(foodUserSearchVo.getPageNum(), foodUserSearchVo.getPageSize());
-        return homeUserFoodMapper.selectPage(page, null);
+        //在分页查询之前，把所有现在已经过期的食材的状态改为2，过期的食材状态为2
+        UpdateWrapper<FoodUser> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("state", 2) // 设置要更新的字段及其值
+                .lt("food_state", new Date()); // 添加条件：expiryDate小于当前日期
+        // 执行更新操作
+        int updatedCount = homeUserFoodMapper.update(null, updateWrapper); // 第一个参数为null，因为实体对象在这里不需要
+
+        DecodedJWT o = ThreadLocalUtil.get();
+        int userId = o.getClaim("id").asInt();
+        LambdaQueryWrapper<FoodUser> queryWrapper = Wrappers.<FoodUser>lambdaQuery();
+        queryWrapper.eq(FoodUser::getUserId, userId)
+                .eq(FoodUser::getFoodExpiredImpression, 0);//过滤过期展示区的数据
+
+
+        return homeUserFoodMapper.selectPage(page, queryWrapper);
+    }
+    //删除食材信息
+    @Override
+    public void deleteFoodType(Integer id) {
+        Permission.check(UserType.USER.getCode());
+        if (check(UserType.DELETE_PERMISSION.getCode())==0){
+            throw new BizException(BizCodeEnum.No_Permissions_Are_Added);
+        }
+        if (homeUserFoodMapper.deleteById(id)<=0){
+            throw new BizException(BizCodeEnum.Failed_To_Delete);
+        }
+
+    }
+    //设置过期状态
+    @Override
+    public void updateExpiredImpressionFood(FoodUser foodUser) {
+        Permission.check(UserType.USER.getCode());
+        if (check(UserType.SUBMIT_EXPIRED_ITEM_PERMISSION.getCode())==0){
+            throw new BizException(BizCodeEnum.No_Permissions_Are_Added);
+        }
+        foodUser.setFoodState(1);//设置为过期状态
+        if(homeUserFoodMapper.updateById(foodUser)<=0){
+            throw new BizException(BizCodeEnum.Failed_To_Update);
+        }
     }
 
 
@@ -97,6 +139,9 @@ public class HomeUserServiceImpl implements HomeUserService {
                 }
                 else if (a == 3){
                     return user.getDeletePermission();//返回删除权限
+                }
+                else if (a == 4){
+                    return user.getSubmitExpiredItemPermission();
                 }
                 else {
                     throw new BizException(BizCodeEnum.Wrong_Role);

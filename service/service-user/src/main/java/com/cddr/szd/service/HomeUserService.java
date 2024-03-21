@@ -15,4 +15,10 @@ public interface HomeUserService {
     IPage<FoodUser> getAllFood(FoodUserSearchVo foodUserSearchVo);
 
 
+    void deleteFoodType(Integer id);
+
+    void updateExpiredImpressionFood(FoodUser foodUser);
+
+    IPage<FoodUser> fuzzyFindFood(FoodUserVo foodUserVo);
+
 }
