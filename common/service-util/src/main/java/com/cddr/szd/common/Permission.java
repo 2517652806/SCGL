@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cddr.szd.enums.BizCodeEnum;
 import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
+import com.cddr.szd.helper.JWTHelper;
 import com.cddr.szd.login.ThreadLocalUtil;
 import com.cddr.szd.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,9 @@ public class Permission {
     public static void check(int choice){//0为管理员端，1为企业用户端，2为家庭用户
 
 
-        DecodedJWT o = ThreadLocalUtil.get();
+        String token = ThreadLocalUtil.get();
 
-        Integer type = o.getClaim("type").asInt();
-        Integer id = o.getClaim("id").asInt();
-
+        Integer type = JWTHelper.getUserType(token);
         if(choice == 0){
             if (type.equals(UserType.ADMIN.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
