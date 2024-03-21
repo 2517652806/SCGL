@@ -1,8 +1,14 @@
 package com.cddr.szd.service;
 
-import com.cddr.szd.model.vo.FoodVo;
+import com.cddr.szd.model.vo.FoodUserVo;
 
 public interface HomeUserService {
 
-    void addFood(FoodVo foodVo);
+    void addFood(FoodUserVo foodUserVo);
+    void updateFood(FoodUserVo foodUserVo);
+//    void addFood(FoodUserVo foodVo);
+
+
+
+
 }

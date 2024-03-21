@@ -24,7 +24,7 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Food implements Serializable {
+public class FoodUser implements Serializable {
 
 
     @TableId(type = IdType.AUTO)

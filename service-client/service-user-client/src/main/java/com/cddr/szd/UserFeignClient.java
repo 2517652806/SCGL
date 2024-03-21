@@ -1,5 +1,6 @@
 package com.cddr.szd;
 
+import com.cddr.szd.model.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;

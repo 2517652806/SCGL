@@ -31,6 +31,10 @@ public enum BizCodeEnum {
     Failed_To_Page(220005, "分页失败"),
     Failed_To_Export(220006, "导出失败"),
     Failed_To_Import(220007, "导入失败"),
+    No_Permissions_Are_Added(220008,"没有添加权限"),
+    No_Permissions_Are_Updated(220009,"没有修改权限"),
+    No_Permissions_Are_Deleted(220010,"没有删除权限"),
+
 
     /**
      * 账号

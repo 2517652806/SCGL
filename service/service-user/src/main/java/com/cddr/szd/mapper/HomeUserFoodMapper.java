@@ -1,7 +1,7 @@
 package com.cddr.szd.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cddr.szd.model.Food;
+import com.cddr.szd.model.FoodUser;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.cddr.szd.model.Food;
  * @author zy
  * @since 2024-03-20
  */
-public interface HomeUserMapper extends BaseMapper<Food> {
+public interface HomeUserFoodMapper extends BaseMapper<FoodUser> {
 
 }

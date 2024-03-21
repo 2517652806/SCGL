@@ -1,11 +1,16 @@
 package com.cddr.szd.service.Impl;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cddr.szd.enums.BizCodeEnum;
+import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
 
+import com.cddr.szd.login.ThreadLocalUtil;
 import com.cddr.szd.mapper.FoodTypeMapper;
 import com.cddr.szd.model.FoodType;
 import com.cddr.szd.model.vo.FoodTypeSearchVo;
@@ -22,13 +27,12 @@ public class FoodTypeServiceImpl implements FoodTypeService {
     @Override
     public void add(FoodType foodType){
 
-//        DecodedJWT o = ThreadLocalUtil.get();
-//        Integer type = o.getClaim("type").asInt();
-//        if (type.equals(UserType.ADMIN.getCode())){
-//            throw new BizException(BizCodeEnum.ADMIN_NOT_CASES);
-//        }
+        DecodedJWT o = ThreadLocalUtil.get();
+        Integer type = o.getClaim("type").asInt();
 
-
+        if (type.equals(UserType.USER.getCode())){
+            throw new BizException(BizCodeEnum.Wrong_Role);
+        }
         int insert = foodTypeMapper.insert(foodType);
         if (insert == 0){
             throw new BizException(BizCodeEnum.Failed_To_Add);
@@ -52,11 +56,26 @@ public class FoodTypeServiceImpl implements FoodTypeService {
         Page<FoodType> page = new Page<>(foodTypeSearchVo.getPageNum(), foodTypeSearchVo.getPageSize());
         return foodTypeMapper.selectPage(page, null);
     }
+    //通过jwt传的useid，查有没有权限操作，管理员type可以操作
     @Override
     public void updateFoodType(FoodType foodType){
+        DecodedJWT o = ThreadLocalUtil.get();
+        Integer type = o.getClaim("type").asInt();
+
+        if (type.equals(UserType.USER.getCode())){
+            throw new BizException(BizCodeEnum.Wrong_Role);
+        }
+        LambdaUpdateWrapper<FoodType> lambdaUpdateWrapper = Wrappers.<FoodType>lambdaUpdate()
+                .eq(FoodType::getId, foodType.getId()) // 设置更新条件为 id 等于给定值
+                .set(FoodType::getFoodType, foodType.getFoodType()); // 设置 name 字段的新值
+
+        int result = foodTypeMapper.update(null, lambdaUpdateWrapper); // 执行更新操作
+        if(result<=0){
+            throw new BizException(BizCodeEnum.Failed_To_Update);
+        }
 
     }
-
+    @Override
     public void deleteFoodType(Integer id){
 
     }

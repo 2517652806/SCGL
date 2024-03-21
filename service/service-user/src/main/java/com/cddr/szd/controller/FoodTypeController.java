@@ -22,4 +22,9 @@ public class FoodTypeController {
     public Result getAllFoodType(FoodTypeSearchVo foodTypeSearchVo){
         return Result.ok(foodTypeService.getAllFoodType(foodTypeSearchVo));
     }
+    @PostMapping("/update")
+    public Result updateFoodType(@RequestBody FoodType foodType){
+        foodTypeService.updateFoodType(foodType);
+        return Result.ok(null);
+    }
 }

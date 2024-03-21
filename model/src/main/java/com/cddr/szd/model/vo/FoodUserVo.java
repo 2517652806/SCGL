@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class FoodVo implements Serializable {
+public class FoodUserVo implements Serializable {
 
 
 
