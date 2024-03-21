@@ -1,21 +1,19 @@
 package com.cddr.szd.service.Impl;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cddr.szd.common.Permission;
+import com.cddr.szd.mapper.FoodTypeMapper;
 import com.cddr.szd.enums.BizCodeEnum;
 import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
 
-import com.cddr.szd.login.ThreadLocalUtil;
-import com.cddr.szd.mapper.FoodTypeMapper;
+
 import com.cddr.szd.model.FoodType;
 import com.cddr.szd.model.vo.FoodTypeSearchVo;
-import com.cddr.szd.result.ResultCodeEnum;
 import com.cddr.szd.service.FoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +25,10 @@ public class FoodTypeServiceImpl implements FoodTypeService {
     @Override
     public void add(FoodType foodType){
         Permission.check(UserType.ADMIN.getCode());
+
+        if(check(foodType)){
+            throw new BizException(BizCodeEnum.Failed_To_Add);
+        }
         int insert = foodTypeMapper.insert(foodType);
         if (insert == 0){
             throw new BizException(BizCodeEnum.Failed_To_Add);
@@ -35,7 +37,6 @@ public class FoodTypeServiceImpl implements FoodTypeService {
     }
 
 
-    @Override
     public boolean check(FoodType foodType){
         LambdaQueryWrapper<FoodType> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(FoodType::getFoodType, foodType.getFoodType()); // 查询foodName等于指定值的记录
@@ -66,6 +67,14 @@ public class FoodTypeServiceImpl implements FoodTypeService {
     }
     @Override
     public void deleteFoodType(Integer id){
+        Permission.check(UserType.ADMIN.getCode());
+        FoodType foodType = foodTypeMapper.selectById(id);
+        if (foodType == null){
+            throw new BizException(100,"操作的记录不存在");
+        }
+        Permission.check(UserType.ADMIN.getCode());
+        foodTypeMapper.deleteById(id);
+
 
     }
 }

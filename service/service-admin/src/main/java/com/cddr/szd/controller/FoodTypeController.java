@@ -27,4 +27,9 @@ public class FoodTypeController {
         foodTypeService.updateFoodType(foodType);
         return Result.ok(null);
     }
+    @DeleteMapping("/delete/{id}")
+    public Result delete(@PathVariable Integer id){
+        foodTypeService.deleteFoodType(id);
+        return Result.ok(null);
+    }
 }
