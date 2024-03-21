@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 
 /**
  * 普通用户
@@ -16,6 +17,8 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class RegularUser {
+    @NotNull(groups = Update.class)
+    private Integer id;
 
     @NotNull
     private String companyName;//企业名
@@ -29,4 +32,8 @@ public class RegularUser {
 
     @NotNull
     private String captcha;//验证码
+
+    public interface Update extends Default {
+
+    }
 }

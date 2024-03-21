@@ -166,9 +166,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public String login(UserVo userVo, Integer code) {
-        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>()
-                .eq(User::getName, userVo.getUserName())
-                .eq(User::getType,code);
+        LambdaQueryWrapper<User> eq = null;
+        if (code.equals(UserType.USER.getCode())){
+            eq = new LambdaQueryWrapper<User>()
+                    .eq(User::getName, userVo.getUserName())
+                    .eq(User::getType,code);
+        }else {
+            eq = new LambdaQueryWrapper<User>()
+                    .eq(User::getName, userVo.getUserName())
+                    .eq(User::getType,code)
+                    .eq(User::getCompanyName,userVo.getCompanyName());
+        }
         User user = userMapper.selectOne(eq);
         if (user == null) {
             throw new BizException(BizCodeEnum.ACCOUNT_UNREGISTER);

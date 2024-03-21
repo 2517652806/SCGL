@@ -74,7 +74,7 @@ public class LoginController {
      * 管理员登录
      */
     @PostMapping("/admin/login")
-    public Result adminLogin(@RequestBody @Validated UserVo userVo){
+    public Result adminLogin(@RequestBody @Validated(UserVo.Company.class) UserVo userVo){
         String token = userService.login(userVo,UserType.ADMIN.getCode());
         return Result.ok(token);
     }
@@ -84,7 +84,7 @@ public class LoginController {
      * 员工登录
      */
     @PostMapping("/employee/login")
-    public Result employeeLogin(@RequestBody @Validated UserVo userVo){
+    public Result employeeLogin(@RequestBody @Validated(UserVo.Company.class) UserVo userVo){
         String token = userService.login(userVo,UserType.EMPLOYEE.getCode());
         return Result.ok(token);
     }
