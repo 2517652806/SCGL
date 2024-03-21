@@ -20,6 +20,7 @@ public class JWTHelper {
     public static String createToken(User user){
         return JWT.create()
                 .withClaim("id", user.getId())
+                .withClaim("name", user.getName())
                 .withClaim("email", user.getEmail())
                 .withClaim("type", user.getType())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12 * 1000))
@@ -31,11 +32,16 @@ public class JWTHelper {
         user.setId(jwt.getClaim("id").asInt());
         user.setEmail(jwt.getClaim("email").asString());
         user.setType(jwt.getClaim("type").asInt());
+        user.setName(jwt.getClaim("name").asString());
         return user;
     }
     public static Integer getUserId(String token){
         return JWT.decode(token)
                 .getClaim("id").asInt();
+    }
+    public static String getUserName(String token){
+        return JWT.decode(token)
+                .getClaim("name").asString();
     }
 
     //接收token,验证token,并返回业务数据
