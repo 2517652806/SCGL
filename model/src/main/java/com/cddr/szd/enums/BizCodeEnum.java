@@ -8,6 +8,8 @@ public enum BizCodeEnum {
     OPERATE_FAIL(210001, "操作失败"),
     PASSWORD_IS_NOT_TRUE(210002,"两次密码不一致"),
     USERINFO_EXIST(210003,"当前用户的个人信息已经存在"),
+    USERNAME_EXIST(210003,"当前用户名已经存在"),
+    EMAIL_EXIST(210003,"当前邮箱已被使用" ),
     ADMIN_NOT_PERMISSIONS(210004,"管理员不能上传个人信息"),
     PASSWORD_NOT_TRUE(210005,"密码错误"),
     ADMIN_NOT_CASES(210006,"管理员不能上传个人病例" ),
