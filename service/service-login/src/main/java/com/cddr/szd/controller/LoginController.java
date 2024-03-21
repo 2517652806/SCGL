@@ -1,5 +1,6 @@
 package com.cddr.szd.controller;
 
+import com.cddr.szd.enums.UserType;
 import com.cddr.szd.loginModel.RegularUser;
 import com.cddr.szd.model.vo.UserVo;
 import com.cddr.szd.result.Result;
@@ -32,7 +33,7 @@ public class LoginController {
      */
     @PostMapping("/home/register")
     public Result register(@RequestBody @Validated RegularUser registerUser) {
-        userService.register(registerUser);
+        userService.register(registerUser, UserType.USER.getCode());
         return Result.ok(null);
     }
 
@@ -41,7 +42,7 @@ public class LoginController {
      */
     @PostMapping("/home/login")
     public Result homeLogin(@RequestBody @Validated UserVo userVo){
-        String token = userService.homeLogin(userVo);
+        String token = userService.login(userVo,UserType.USER.getCode());
         return Result.ok(token);
     }
     /**
@@ -70,11 +71,21 @@ public class LoginController {
     }
 
     /**
-     * 企业版登录
+     * 管理员登录
      */
     @PostMapping("/admin/login")
     public Result adminLogin(@RequestBody @Validated UserVo userVo){
-        String token = userService.enterpriseLogin(userVo);
+        String token = userService.login(userVo,UserType.ADMIN.getCode());
+        return Result.ok(token);
+    }
+
+
+    /**
+     * 员工登录
+     */
+    @PostMapping("/employee/login")
+    public Result employeeLogin(@RequestBody @Validated UserVo userVo){
+        String token = userService.login(userVo,UserType.EMPLOYEE.getCode());
         return Result.ok(token);
     }
 }

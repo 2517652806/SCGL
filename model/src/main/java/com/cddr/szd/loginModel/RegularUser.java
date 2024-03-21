@@ -17,6 +17,8 @@ import javax.validation.constraints.NotNull;
 @Accessors(chain = true)
 public class RegularUser {
     @NotNull
+    private String name; //账号
+    @NotNull
     private String password;//密码
     @NotNull
     private String confirmPassword;//确认密码
