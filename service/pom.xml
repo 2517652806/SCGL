@@ -11,6 +11,7 @@
     <modules>
         <module>service-user</module>
         <module>service-login</module>
+        <module>service-admin</module>
     </modules>
     <modelVersion>4.0.0</modelVersion>
 

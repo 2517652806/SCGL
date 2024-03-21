@@ -1,4 +1,4 @@
-package com.cddr.szd.loginModel;
+package com.cddr.szd.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

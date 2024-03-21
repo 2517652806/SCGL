@@ -32,8 +32,8 @@ public class LoginFilter implements HandlerInterceptor {
 
         //验证token是否合法
         try {
-            Integer userId = JWTHelper.getUserId(token);
-            String s = stringRedisTemplate.opsForValue().get(userId.toString());
+            String userName = JWTHelper.getUserName(token);
+            String s = stringRedisTemplate.opsForValue().get(userName);
             if (s == null || !s.equals(token)){
                 throw new BizException(401,"token失效");
             }
