@@ -19,10 +19,16 @@ public class HomeUserController {
         homeUserService.addFood(foodUserVo);
         return Result.ok(null);
     }
-    @GetMapping("/update")
+    @PostMapping("/update")
     public Result updateFood(@RequestBody  @Validated(FoodUserVo.Update.class) FoodUserVo foodUserVo){
-        homeUserService.(foodUserVo);
+        homeUserService.updateFood(foodUserVo);
         return Result.ok(null);
     }
+    @GetMapping ("/findAll")
+    public Result findFood(){
+        homeUserService.
+        return Result.ok(null);
+    }
+
 
 }

@@ -3,7 +3,9 @@ package com.cddr.szd.service.Impl;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.cddr.szd.common.Permission;
 import com.cddr.szd.enums.BizCodeEnum;
 import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
@@ -14,6 +16,8 @@ import com.cddr.szd.mapper.UserMapper;
 import com.cddr.szd.model.FoodUser;
 import com.cddr.szd.model.FoodType;
 import com.cddr.szd.model.User;
+import com.cddr.szd.model.vo.FoodTypeSearchVo;
+import com.cddr.szd.model.vo.FoodUserSearchVo;
 import com.cddr.szd.model.vo.FoodUserVo;
 import com.cddr.szd.service.HomeUserService;
 import org.springframework.beans.BeanUtils;
@@ -27,7 +31,7 @@ public class HomeUserServiceImpl implements HomeUserService {
     @Autowired
     private UserMapper userMapper;
 
-
+    Permission permission = new Permission();
 
 
     @Override
@@ -68,7 +72,7 @@ public class HomeUserServiceImpl implements HomeUserService {
             throw new BizException(BizCodeEnum.Wrong_Role);
         }
         //有没有权限
-        if(check(userId,2)==0){
+        if(check(2)==0){
             throw new BizException(BizCodeEnum.No_Permissions_Are_Added);
         }
 
@@ -86,9 +90,24 @@ public class HomeUserServiceImpl implements HomeUserService {
 
     }
 
+    @Override
+    public IPage<FoodUser> getAllFood(FoodUserSearchVo foodUserSearchVo){
+        if(!permission.check(2)){
+            throw new BizException(BizCodeEnum.Wrong_Role);
+        }
+
+
+
+
+
+    }
+
+
     //判断用户是否有操作权限
-    public Integer check(Integer id,Integer a){
-        QueryWrapper<User> queryWrapper = Wrappers.<User>query().eq("id", id);
+    public Integer check(Integer a){//
+        DecodedJWT o = ThreadLocalUtil.get();
+        int userId = o.getClaim("id").asInt();
+        QueryWrapper<User> queryWrapper = Wrappers.<User>query().eq("id", userId);
         User user = userMapper.selectOne(queryWrapper);
             if (user != null) {
                 if (a == 1){
@@ -101,10 +120,13 @@ public class HomeUserServiceImpl implements HomeUserService {
                     return user.getDeletePermission();//返回删除权限
                 }
                 else {
-                    return 2;//权限只有0和1
+                    throw new BizException(BizCodeEnum.Wrong_Role);
                 }
             }
-            return null;
+            else {
+                throw new BizException(BizCodeEnum.Wrong_Role);
+            }
+
 
     }
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cddr.szd.common.Permission;
 import com.cddr.szd.enums.BizCodeEnum;
 import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
@@ -23,14 +24,18 @@ import org.springframework.stereotype.Service;
 public class FoodTypeServiceImpl implements FoodTypeService {
     @Autowired
     FoodTypeMapper foodTypeMapper;
-
+    Permission permission = new Permission();
     @Override
     public void add(FoodType foodType){
 
-        DecodedJWT o = ThreadLocalUtil.get();
-        Integer type = o.getClaim("type").asInt();
+//        DecodedJWT o = ThreadLocalUtil.get();
+//        Integer type = o.getClaim("type").asInt();
+//
+//        if (type.equals(UserType.USER.getCode())){
+//            throw new BizException(BizCodeEnum.Wrong_Role);
+//        }
 
-        if (type.equals(UserType.USER.getCode())){
+        if(!permission.check(2)){
             throw new BizException(BizCodeEnum.Wrong_Role);
         }
         int insert = foodTypeMapper.insert(foodType);
