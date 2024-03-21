@@ -1,14 +1,24 @@
 package com.cddr.szd.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.cddr.szd.model.RegularUser;
+import com.cddr.szd.result.Result;
+import com.cddr.szd.service.AdminService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-    @GetMapping("")
-    public String admin(){
-        return "admin";
+    @Autowired
+    private AdminService adminService;
+    /**
+     * 添加企业用户
+     * @return
+     */
+    @PostMapping("add/user")
+    public Result addUser(@RequestBody @Validated RegularUser regularUser){
+        adminService.addUser(regularUser);
+        return Result.ok("操作成功");
     }
 }

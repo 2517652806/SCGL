@@ -1,7 +1,7 @@
 package com.cddr.szd.controller;
 
 import com.cddr.szd.enums.UserType;
-import com.cddr.szd.loginModel.RegularUser;
+import com.cddr.szd.model.vo.RegularUser;
 import com.cddr.szd.model.vo.UserVo;
 import com.cddr.szd.result.Result;
 import com.cddr.szd.service.UserService;

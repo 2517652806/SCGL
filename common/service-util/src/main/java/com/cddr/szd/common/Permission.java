@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.security.Permissions;
 
 public class Permission {
-    public Boolean check(int choice){//0为管理员端，1为企业用户端，2为家庭用户
+    public static void check(int choice){//0为管理员端，1为企业用户端，2为家庭用户
 
 
         DecodedJWT o = ThreadLocalUtil.get();
@@ -26,18 +26,15 @@ public class Permission {
             if (type.equals(UserType.ADMIN.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
-            return true;
         }
         else if (choice == 1){
             if (type.equals(UserType.EMPLOYEE.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
-            return true;
         } else if (choice == 2) {
             if (type.equals(UserType.USER.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
-            return true;
         }
         else {
             throw new BizException(BizCodeEnum.OPERATE_FAIL);
