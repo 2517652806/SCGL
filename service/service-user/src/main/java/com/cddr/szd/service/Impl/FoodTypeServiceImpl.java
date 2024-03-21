@@ -26,7 +26,6 @@ public class FoodTypeServiceImpl implements FoodTypeService {
     FoodTypeMapper foodTypeMapper;
     @Override
     public void add(FoodType foodType){
-
         Permission.check(UserType.ADMIN.getCode());
         int insert = foodTypeMapper.insert(foodType);
         if (insert == 0){
