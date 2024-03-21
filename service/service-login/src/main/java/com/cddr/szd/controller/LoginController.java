@@ -58,7 +58,7 @@ public class LoginController {
             return Result.fail("缺少必要参数");
         }
         userService.updatePassword(captcha,newPwd,rePwd);
-        return Result.ok("操作成功");
+        return Result.ok(null);
     }
 
     /**
@@ -67,7 +67,7 @@ public class LoginController {
     @GetMapping("/logout")
     public Result logout() {
         userService.logout();
-        return Result.ok("操作成功");
+        return Result.ok(null);
     }
 
     /**

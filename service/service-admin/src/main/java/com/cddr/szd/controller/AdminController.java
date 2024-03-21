@@ -19,6 +19,6 @@ public class AdminController {
     @PostMapping("add/user")
     public Result addUser(@RequestBody @Validated RegularUser regularUser){
         adminService.addUser(regularUser);
-        return Result.ok("操作成功");
+        return Result.ok(null);
     }
 }

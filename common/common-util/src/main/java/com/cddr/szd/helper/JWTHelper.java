@@ -44,6 +44,11 @@ public class JWTHelper {
                 .getClaim("name").asString();
     }
 
+    public static Integer getUserType(String token){
+        return JWT.decode(token)
+                .getClaim("type").asInt();
+    }
+
     //接收token,验证token,并返回业务数据
     public static DecodedJWT parseToken(String token) {
         return JWT.require(Algorithm.HMAC256(tokenSignKey))

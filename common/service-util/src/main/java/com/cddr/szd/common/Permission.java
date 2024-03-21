@@ -1,31 +1,37 @@
 package com.cddr.szd.common;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.cddr.szd.enums.BizCodeEnum;
 import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
+import com.cddr.szd.helper.JWTHelper;
 import com.cddr.szd.login.ThreadLocalUtil;
+import com.cddr.szd.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.security.Permissions;
 
 public class Permission {
-    public static void check(int choice){//0为管理员端，1为企业用户端，2为家庭用户
+    public static void check(Integer choice){//0为管理员端，1为企业用户端，2为家庭用户
 
 
-        DecodedJWT o = ThreadLocalUtil.get();
+        String token = ThreadLocalUtil.get();
 
-        Integer type = o.getClaim("type").asInt();
-        Integer id = o.getClaim("id").asInt();
-
-        if(choice == 0){
+        Integer type = JWTHelper.getUserType(token);
+        if(choice.equals(UserType.ADMIN.getCode())){
             if (!type.equals(UserType.ADMIN.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
         }
-        else if (choice == 1){
-            if (type.equals(UserType.EMPLOYEE.getCode())){
+        else if (choice.equals(UserType.EMPLOYEE.getCode())){
+            if (!type.equals(UserType.EMPLOYEE.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
-        } else if (choice == 2) {
-            if (type.equals(UserType.USER.getCode())){
+        } else if (choice.equals(UserType.USER.getCode())) {
+            if (!type.equals(UserType.USER.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
         }
