@@ -55,7 +55,7 @@ public class AdminServiceImpl implements AdminService {
             //将user对象持久化到Mysql
             userMapper.insert(user);
         } else {
-            throw new BizException(BizCodeEnum.ACCOUNT_REPEAT);
+            throw new  BizException(BizCodeEnum.ACCOUNT_REPEAT);
         }
     }
 
@@ -119,7 +119,6 @@ public class AdminServiceImpl implements AdminService {
         userInfoPage = userMapper.selectPage(userInfoPage, userLambdaQueryWrapper);
         return userInfoPage;
     }
-
     @Override
     public void updatePermission(UserPermission userPermission) {
         Permission.check(UserType.ADMIN.getCode());

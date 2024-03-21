@@ -19,6 +19,6 @@ public interface HomeUserService {
 
     void updateExpiredImpressionFood(FoodUser foodUser);
 
-    IPage<FoodUser> fuzzyFindFood(FoodUserVo foodUserVo);
+
 
 }

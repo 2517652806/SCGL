@@ -26,8 +26,9 @@ public enum BizCodeEnum {
     /**
      * 数据
      */
-    Failed_To_Add(220001, "添加失败"),
+    Failed_To_Add(220001, "添加失败,该类型已添加过了"),
     Failed_To_Update(220002, "更新失败"),
+    FAILED_TYPE_EXIST(220002, "更新失败,该类型已添加过了"),
     Failed_To_Delete(220003, "删除失败"),
     Failed_To_Get(220004, "获取失败"),
     Failed_To_Page(220005, "分页失败"),

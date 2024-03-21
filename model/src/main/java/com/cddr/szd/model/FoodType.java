@@ -32,6 +32,9 @@ public class FoodType implements Serializable {
     @Size(max = 50, message = "名字的长度不能超过50个字符")
     private String foodType;
 
+    @NotNull
+    private String companyName; //公司名称
+
     /**
      * 创建时间
      */

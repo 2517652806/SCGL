@@ -46,7 +46,7 @@ public class AdminController {
      * 分页查询用户信息
      */
     @GetMapping("find/user")
-    public Result findUser(SearchUser searchUser){
+    public Result findUser(@Validated SearchUser searchUser){
         return Result.ok(adminService.findUser(searchUser));
     }
 

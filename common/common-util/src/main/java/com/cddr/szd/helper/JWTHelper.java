@@ -23,6 +23,7 @@ public class JWTHelper {
                 .withClaim("name", user.getName())
                 .withClaim("email", user.getEmail())
                 .withClaim("type", user.getType())
+                .withClaim("companyName", user.getCompanyName())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12 * 1000))
                 .sign(Algorithm.HMAC256(tokenSignKey));
     }
@@ -33,6 +34,7 @@ public class JWTHelper {
         user.setEmail(jwt.getClaim("email").asString());
         user.setType(jwt.getClaim("type").asInt());
         user.setName(jwt.getClaim("name").asString());
+        user.setCompanyName(jwt.getClaim("companyName").asString());
         return user;
     }
     public static Integer getUserId(String token){
@@ -49,6 +51,10 @@ public class JWTHelper {
                 .getClaim("type").asInt();
     }
 
+    public static String getCompanyName(String token){
+        return JWT.decode(token)
+                .getClaim("companyName").asString();
+    }
     //接收token,验证token,并返回业务数据
     public static DecodedJWT parseToken(String token) {
         return JWT.require(Algorithm.HMAC256(tokenSignKey))
