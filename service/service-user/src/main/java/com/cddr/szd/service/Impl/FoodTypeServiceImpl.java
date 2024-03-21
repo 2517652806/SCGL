@@ -24,20 +24,10 @@ import org.springframework.stereotype.Service;
 public class FoodTypeServiceImpl implements FoodTypeService {
     @Autowired
     FoodTypeMapper foodTypeMapper;
-    Permission permission = new Permission();
     @Override
     public void add(FoodType foodType){
 
-//        DecodedJWT o = ThreadLocalUtil.get();
-//        Integer type = o.getClaim("type").asInt();
-//
-//        if (type.equals(UserType.USER.getCode())){
-//            throw new BizException(BizCodeEnum.Wrong_Role);
-//        }
-
-        if(!permission.check(2)){
-            throw new BizException(BizCodeEnum.Wrong_Role);
-        }
+        Permission.check(UserType.ADMIN.getCode());
         int insert = foodTypeMapper.insert(foodType);
         if (insert == 0){
             throw new BizException(BizCodeEnum.Failed_To_Add);
@@ -64,12 +54,7 @@ public class FoodTypeServiceImpl implements FoodTypeService {
     //通过jwt传的useid，查有没有权限操作，管理员type可以操作
     @Override
     public void updateFoodType(FoodType foodType){
-        DecodedJWT o = ThreadLocalUtil.get();
-        Integer type = o.getClaim("type").asInt();
-
-        if (type.equals(UserType.USER.getCode())){
-            throw new BizException(BizCodeEnum.Wrong_Role);
-        }
+        Permission.check(UserType.ADMIN.getCode());
         LambdaUpdateWrapper<FoodType> lambdaUpdateWrapper = Wrappers.<FoodType>lambdaUpdate()
                 .eq(FoodType::getId, foodType.getId()) // 设置更新条件为 id 等于给定值
                 .set(FoodType::getFoodType, foodType.getFoodType()); // 设置 name 字段的新值

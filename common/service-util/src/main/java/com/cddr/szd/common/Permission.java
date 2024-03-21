@@ -16,7 +16,7 @@ public class Permission {
         Integer id = o.getClaim("id").asInt();
 
         if(choice == 0){
-            if (type.equals(UserType.ADMIN.getCode())){
+            if (!type.equals(UserType.ADMIN.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
         }

@@ -1,5 +1,6 @@
 package com.cddr.szd.controller;
 
+import com.cddr.szd.model.vo.FoodUserSearchVo;
 import com.cddr.szd.model.vo.FoodUserVo;
 import com.cddr.szd.result.Result;
 import com.cddr.szd.service.HomeUserService;
@@ -25,10 +26,11 @@ public class HomeUserController {
         return Result.ok(null);
     }
     @GetMapping ("/findAll")
-    public Result findFood(){
-        homeUserService.
+    public Result findFood(FoodUserSearchVo foodUserSearchVo){
+        homeUserService.getAllFood(foodUserSearchVo);
         return Result.ok(null);
     }
+
 
 
 }
