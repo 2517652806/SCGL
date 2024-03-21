@@ -32,7 +32,7 @@ public class AdminServiceImpl implements AdminService {
             throw new BizException(BizCodeEnum.CODE_ERROR);
         }
 
-        //判断当前邮箱和用户名是否被注册
+        //判断当前邮箱或用户名是否被注册
         LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>()
                 .eq(User::getEmail, registerUser.getEmail())
                 .or()
@@ -45,7 +45,7 @@ public class AdminServiceImpl implements AdminService {
             User user = new User();
             //将前端传过来的合法对象赋值给user对象
             BeanUtils.copyProperties(registerUser, user);
-            user.setType(UserType.EMPLOYEE.getCode())
+            user.setType(UserType.EMPLOYEE.getCode()).setPassword(md5String)
                     .setAddPermission(0).setUpdataPermission(0).setDeletePermission(0).setSubmitExpiredItemPermission(0);
             //将user对象持久化到Mysql
             userMapper.insert(user);

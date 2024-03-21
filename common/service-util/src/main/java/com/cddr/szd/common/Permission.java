@@ -15,23 +15,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.security.Permissions;
 
 public class Permission {
-    public static void check(int choice){//0为管理员端，1为企业用户端，2为家庭用户
+    public static void check(Integer choice){//0为管理员端，1为企业用户端，2为家庭用户
 
 
         String token = ThreadLocalUtil.get();
 
         Integer type = JWTHelper.getUserType(token);
-        if(choice == 0){
-            if (type.equals(UserType.ADMIN.getCode())){
+        if(choice.equals(UserType.ADMIN.getCode())){
+            if (!type.equals(UserType.ADMIN.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
         }
-        else if (choice == 1){
-            if (type.equals(UserType.EMPLOYEE.getCode())){
+        else if (choice.equals(UserType.EMPLOYEE.getCode())){
+            if (!type.equals(UserType.EMPLOYEE.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
-        } else if (choice == 2) {
-            if (type.equals(UserType.USER.getCode())){
+        } else if (choice.equals(UserType.USER.getCode())) {
+            if (!type.equals(UserType.USER.getCode())){
                 throw new BizException(BizCodeEnum.Wrong_Role);
             }
         }
