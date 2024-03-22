@@ -7,6 +7,8 @@ import com.cddr.szd.model.vo.FoodTypeSearchVo;
 import com.cddr.szd.model.vo.FoodUserSearchVo;
 import com.cddr.szd.model.vo.FoodUserVo;
 
+import java.util.List;
+
 public interface HomeUserService {
 
     void addFood(FoodUserVo foodUserVo);
@@ -20,5 +22,5 @@ public interface HomeUserService {
     void updateExpiredImpressionFood(FoodUser foodUser);
 
 
-
+    List<FoodType> allFootType();
 }

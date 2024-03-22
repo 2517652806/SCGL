@@ -1,4 +1,4 @@
-package com.cddr.szd.service.Impl;
+package com.cddr.szd.service.impl;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -14,6 +14,7 @@ import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
 
 import com.cddr.szd.login.ThreadLocalUtil;
+import com.cddr.szd.mapper.FoodTypeMapper;
 import com.cddr.szd.mapper.HomeUserFoodMapper;
 import com.cddr.szd.mapper.UserMapper;
 import com.cddr.szd.model.FoodUser;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class HomeUserServiceImpl implements HomeUserService {
@@ -35,6 +37,8 @@ public class HomeUserServiceImpl implements HomeUserService {
     private HomeUserFoodMapper homeUserFoodMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private FoodTypeMapper foodTypeMapper;
 
 
     @Override
@@ -121,6 +125,13 @@ public class HomeUserServiceImpl implements HomeUserService {
         if(homeUserFoodMapper.updateById(foodUser)<=0){
             throw new BizException(BizCodeEnum.Failed_To_Update);
         }
+    }
+
+    @Override
+    public List<FoodType> allFootType() {
+        Permission.check(UserType.USER.getCode());
+        LambdaQueryWrapper<FoodType> eq = new LambdaQueryWrapper<FoodType>().eq(FoodType::getCompanyName, "home");
+        return foodTypeMapper.selectList(eq);
     }
 
 

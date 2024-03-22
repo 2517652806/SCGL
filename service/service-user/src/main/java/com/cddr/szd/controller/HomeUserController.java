@@ -47,8 +47,15 @@ public class HomeUserController {
     //除开的过期区的数据的模糊查询
     @GetMapping("/fuzzyFindFood")
     public Result fuzzyFindFood(@RequestBody  @Validated(FoodUserVo.Update.class) FoodUserVo foodUserVo){
-        homeUserService.fuzzyFindFood(foodUserVo);
+//        homeUserService.fuzzyFindFood(foodUserVo);
         return Result.ok(null);
+    }
+    /**
+     * 查询食材分类
+     */
+    @GetMapping("/allFoodType")
+    public Result allFootType(){
+        return Result.ok(homeUserService.allFootType());
     }
 
 }
