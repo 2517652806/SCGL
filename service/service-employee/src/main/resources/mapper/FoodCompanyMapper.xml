@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cddr.szd.mapper.FoodCompanyMapper">
+    <resultMap id="AnalysisData" type="com.cddr.szd.model.dto.Analysis">
+        <result property="value" column="value"/>
+        <result property="foodType" column="food_type"/>
+    </resultMap>
+
+    <select id="analysisByWeight" resultMap="AnalysisData">
+        select weight as value,food_type
+        from food_company, food_type
+        where food_company.type_id = food_type.id
+          and food_company.company_name = #{companyName}
+    </select>
+    <select id="analysisByNotExpired" resultType="com.cddr.szd.model.dto.Analysis">
+        select food_type
+        from food_company,
+             food_type
+        where food_company.type_id = food_type.id
+          and expiration_time > now()
+          and food_company.company_name = #{companyName}
+    </select>
+
+    <select id="analysisByExpired" resultType="com.cddr.szd.model.dto.Analysis">
+        select food_type
+        from food_company, food_type
+        where food_company.type_id = food_type.id
+        and now() > expiration_time
+        and food_company.company_name = #{companyName}
+    </select>
+</mapper>

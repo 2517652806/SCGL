@@ -88,4 +88,12 @@ public class LoginController {
         String token = userService.login(userVo,UserType.EMPLOYEE.getCode());
         return Result.ok(token);
     }
+
+    /**
+     * 获取用户信息
+     */
+    @GetMapping("/getUserInfo")
+    public Result getUserInfo() {
+        return Result.ok(userService.getUserInfo());
+    }
 }

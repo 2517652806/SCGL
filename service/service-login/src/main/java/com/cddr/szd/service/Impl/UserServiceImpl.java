@@ -191,4 +191,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         forValue.set(user.getName(), token, 1, TimeUnit.HOURS);
         return token;
     }
+
+    @Override
+    public User getUserInfo() {
+        String token = ThreadLocalUtil.get();
+        Integer userId = JWTHelper.getUserId(token);
+        if (userId == null || userId <= 0){
+            throw new BizException(BizCodeEnum.Wrong_Role);
+        }
+        User user = userMapper.selectById(userId);
+        return user;
+    }
 }

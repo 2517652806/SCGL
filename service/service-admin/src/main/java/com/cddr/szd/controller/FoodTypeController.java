@@ -33,8 +33,12 @@ public class FoodTypeController {
         foodTypeService.deleteFoodType(id);
         return Result.ok(null);
     }
-    @GetMapping("/getAllFoodType")
-    public Result getAllFoodType(){
-        return Result.ok(foodTypeService.getAllFoodType());
+
+    /**
+     * 数据分析
+     */
+    @GetMapping("/analysis/{type}")
+    public Result analysis(@PathVariable Integer type){
+        return Result.ok(foodTypeService.getAnalysis(type));
     }
 }

@@ -12,6 +12,7 @@
         <module>service-user</module>
         <module>service-login</module>
         <module>service-admin</module>
+        <module>service-employee</module>
     </modules>
     <modelVersion>4.0.0</modelVersion>
 

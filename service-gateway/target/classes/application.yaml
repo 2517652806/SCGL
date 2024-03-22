@@ -31,6 +31,10 @@ spring:
           predicates:
             - Path=/*/admin/**
 
+        - id: service-employee
+          uri: lb://service-employee
+          predicates:
+            - Path=/*/employee/**
 
 
 

@@ -16,4 +16,6 @@ public interface UserService extends IService<User> {
     void logout();
 
     String login(UserVo userVo, Integer code);
+
+    User getUserInfo();
 }

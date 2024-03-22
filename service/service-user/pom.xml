@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.cddr.szd</groupId>
+    <groupId>com.cddr.zy</groupId>
     <artifactId>service-user</artifactId>
 
 
@@ -22,12 +22,6 @@
 
     <dependencies>
 
-<!--        search模块的远程调用接口-->
-        <dependency>
-            <groupId>com.cddr.szd</groupId>
-            <artifactId>service-user-client</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
 

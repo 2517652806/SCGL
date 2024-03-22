@@ -8,27 +8,36 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cddr.szd.common.Permission;
 import com.cddr.szd.helper.JWTHelper;
 import com.cddr.szd.login.ThreadLocalUtil;
+import com.cddr.szd.mapper.FoodCompanyMapper;
 import com.cddr.szd.mapper.FoodTypeMapper;
 import com.cddr.szd.enums.BizCodeEnum;
 import com.cddr.szd.enums.UserType;
 import com.cddr.szd.exception.BizException;
 
 
+import com.cddr.szd.model.AnalysisData;
 import com.cddr.szd.model.FoodType;
+import com.cddr.szd.model.dto.Analysis;
 import com.cddr.szd.model.vo.FoodTypeSearchVo;
 import com.cddr.szd.service.FoodTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class FoodTypeServiceImpl implements FoodTypeService {
     @Autowired
     private FoodTypeMapper foodTypeMapper;
+    @Autowired
+    private FoodCompanyMapper foodCompany;
     @Override
     public void add(FoodType foodType){
+        Permission.check(UserType.ADMIN.getCode());
         Permission.check(UserType.ADMIN.getCode());
         check(foodType);
         int insert = foodTypeMapper.insert(foodType);
@@ -40,6 +49,7 @@ public class FoodTypeServiceImpl implements FoodTypeService {
 
 
     public void check(FoodType foodType){
+
         LambdaQueryWrapper<FoodType> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(FoodType::getFoodType, foodType.getFoodType())
                 .eq(FoodType::getCompanyName,foodType.getCompanyName()); // 查询foodName等于指定值的记录
@@ -99,13 +109,43 @@ public class FoodTypeServiceImpl implements FoodTypeService {
         foodTypeMapper.deleteById(id);
     }
 
+
     @Override
-    public List<FoodType> getAllFoodType() {
+    public ArrayList<AnalysisData> getAnalysis(Integer type) {
+        Permission.check(UserType.ADMIN.getCode());
         String token = ThreadLocalUtil.get();
         String companyName = JWTHelper.getCompanyName(token);
-        if (companyName == null){
-            throw new BizException(BizCodeEnum.ACCOUNT_UN_LOGIN);
+        if (type == 1){//总重量分布
+            List<Analysis> analysisList = foodCompany.analysisByWeight(companyName);
+            //对analysisList按照foodType分组并计算每组的value和
+            Map<String, Double> collect = analysisList.stream().collect(Collectors.groupingBy(Analysis::getFoodType, Collectors.summingDouble(Analysis::getValue)));
+            ArrayList<AnalysisData> analysisDataArrayList = new ArrayList<>();
+            collect.forEach((k,v)->{
+                AnalysisData analysisData = new AnalysisData(v, k);
+                analysisDataArrayList.add(analysisData);
+            });
+            return analysisDataArrayList;
+        }else if (type == 2){//未过期分布
+            List<Analysis> analysisList = foodCompany.analysisByNotExpired(companyName);
+            Map<String, Long> collect = analysisList.stream().collect(Collectors.groupingBy(Analysis::getFoodType, Collectors.counting()));
+            ArrayList<AnalysisData> analysisDataArrayList = new ArrayList<>();
+            collect.forEach((k,v)->{
+                AnalysisData analysisData = new AnalysisData(v.doubleValue(), k);
+                analysisDataArrayList.add(analysisData);
+            });
+            return analysisDataArrayList;
+        } else if (type == 3) {//过期分布
+            List<Analysis> analysisList = foodCompany.analysisByExpired(companyName);
+            Map<String, Long> collect = analysisList.stream().collect(Collectors.groupingBy(Analysis::getFoodType, Collectors.counting()));
+            ArrayList<AnalysisData> analysisDataArrayList = new ArrayList<>();
+            collect.forEach((k,v)->{
+                AnalysisData analysisData = new AnalysisData(v.doubleValue(), k);
+                analysisDataArrayList.add(analysisData);
+            });
+            return analysisDataArrayList;
+
+        }else {
+            throw new BizException(BizCodeEnum.OPERATE_FAIL);
         }
-        return foodTypeMapper.selectList(new LambdaQueryWrapper<FoodType>().eq(FoodType::getCompanyName,companyName));
     }
 }

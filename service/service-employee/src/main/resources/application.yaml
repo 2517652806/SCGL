@@ -1,0 +1,43 @@
+server:
+  port: 8086
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+spring:
+  application:
+    name: service-employee
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.108.68.173:3306/FoodManage?characterEncoding=utf8&connectTimeout=1000&socketTimeout=30000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+    resources:
+      add-mappings: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 8.137.39.123:8848
+#        namespace: a6bd89bf-fc3a-45a1-8018-116df3b283e2
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000 #设置过期时间
+  redis:
+    host: 47.108.68.173
+    port: 6379
+    password: 123456
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: 100ms
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+

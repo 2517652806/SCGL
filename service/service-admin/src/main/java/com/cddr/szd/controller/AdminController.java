@@ -67,4 +67,5 @@ public class AdminController {
         adminService.resetPassword(id);
         return Result.ok(null);
     }
+
 }

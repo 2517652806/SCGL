@@ -6,6 +6,7 @@
         <artifactId>service</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <version>1.0-SNAPSHOT</version>
     <dependencies>
         <!--        发送邮件-->
         <dependency>

@@ -16,7 +16,6 @@
         <module>service</module>
         <module>service/service-user</module>
         <module>service-gateway</module>
-        <module>service-client</module>
     </modules>
 
     <parent>
