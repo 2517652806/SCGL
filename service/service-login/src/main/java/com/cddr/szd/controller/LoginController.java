@@ -32,7 +32,7 @@ public class LoginController {
      * 家庭版用户注册
      */
     @PostMapping("/home/register")
-    public Result register(@RequestBody @Validated RegularUser registerUser) {
+    public Result register(@RequestBody @Validated(RegularUser.Add.class) RegularUser registerUser) {
         userService.register(registerUser, UserType.USER.getCode());
         return Result.ok(null);
     }
@@ -95,5 +95,14 @@ public class LoginController {
     @GetMapping("/getUserInfo")
     public Result getUserInfo() {
         return Result.ok(userService.getUserInfo());
+    }
+
+    /**
+     * 修改用户信息
+     */
+    @PutMapping("update/user")
+    public Result updateUser(@RequestBody @Validated(RegularUser.Update.class) RegularUser regularUser){
+        userService.updateUser(regularUser);
+        return Result.ok(null);
     }
 }

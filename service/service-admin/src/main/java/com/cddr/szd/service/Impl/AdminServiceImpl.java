@@ -156,15 +156,14 @@ public class AdminServiceImpl implements AdminService {
 
 
     private void ParamValida  (RegularUser regularUser){
-        User user = null;
         LambdaQueryWrapper<User> name = new LambdaQueryWrapper<User>().eq(User::getName, regularUser.getName());
-        user = userMapper.selectOne(name);
-        if (user!= null && !user.getId().equals(regularUser.getId())){
+        User userName = userMapper.selectOne(name);
+        if (userName!= null && !userName.getId().equals(regularUser.getId())){
             throw new BizException(BizCodeEnum.USERNAME_EXIST);
         }
         LambdaQueryWrapper<User> email = new LambdaQueryWrapper<User>().eq(User::getEmail, regularUser.getEmail());
-        user = userMapper.selectOne(email);
-        if (user!= null && !user.getId().equals(regularUser.getId())){
+        User userEmail = userMapper.selectOne(email);
+        if (userEmail!= null && !userEmail.getId().equals(regularUser.getId())){
             throw new BizException(BizCodeEnum.EMAIL_EXIST);
         }
     }

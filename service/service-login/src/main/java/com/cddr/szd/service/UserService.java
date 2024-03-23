@@ -18,4 +18,6 @@ public interface UserService extends IService<User> {
     String login(UserVo userVo, Integer code);
 
     User getUserInfo();
+
+    void updateUser(RegularUser regularUser);
 }

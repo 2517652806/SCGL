@@ -96,11 +96,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         //判断当前邮箱和用户名是否被注册
-        LambdaQueryWrapper<User> eq = new LambdaQueryWrapper<User>()
-                .eq(User::getEmail, registerUser.getEmail())
-                .or()
-                .eq(User::getName, registerUser.getName());
-        User one = userMapper.selectOne(eq);
+        User one = checkUser(registerUser);
         if (one == null) {
             //对密码进行MD5加密
             String md5String = Md5Util.getMD5String(registerUser.getPassword());
@@ -200,6 +196,46 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException(BizCodeEnum.Wrong_Role);
         }
         User user = userMapper.selectById(userId);
+        return user;
+    }
+
+    @Override
+    public void updateUser(RegularUser regularUser) {
+        String token = ThreadLocalUtil.get();
+        User userInfo = JWTHelper.getUserInfo(token);
+        if (!userInfo.getId().equals(regularUser.getId())){
+            throw new BizException(BizCodeEnum.Wrong_Role);
+        }
+        //判断当前邮箱和用户名是否被注册
+        checkUser(regularUser);
+        //校验验证码是否合法
+        String s = stringRedisTemplate.opsForValue().get(regularUser.getEmail());
+        if (!s.equals(regularUser.getCaptcha())){
+            throw new BizException(BizCodeEnum.CODE_ERROR);
+        }
+        User user = userMapper.selectById(regularUser.getId());
+        BeanUtils.copyProperties(regularUser,user);
+        int i = userMapper.updateById(user);
+        if (i!=1){
+            throw new BizException(BizCodeEnum.OPERATE_FAIL);
+        }
+
+    }
+
+    private User checkUser(RegularUser regularUser) {
+        User user = new User();
+        LambdaQueryWrapper<User> email = new LambdaQueryWrapper<User>()
+                .eq(User::getEmail, regularUser.getEmail());
+        user = userMapper.selectOne(email);
+        if (user!=null && !user.getId().equals(regularUser.getId())){
+            throw new BizException(BizCodeEnum.USERINFO_EXIST);
+        }
+        LambdaQueryWrapper<User> name = new LambdaQueryWrapper<User>()
+                .eq(User::getName, regularUser.getName());
+        user = userMapper.selectOne(name);
+        if (user!=null && !user.getId().equals(regularUser.getId())){
+            throw new BizException(BizCodeEnum.USERINFO_EXIST);
+        }
         return user;
     }
 }
